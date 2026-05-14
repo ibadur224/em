@@ -1,688 +1,790 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SAFEGUARD | Emergency Response System</title>
-    <!-- Google Fonts Import -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeReach — Emergency Response</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* -- Core geometry (responsive, viewport-based) -- */
+      --circle-diameter: 16vmin;
+      --circle-radius: 8vmin;
+      --gap: 2vmin;
+      --trap-length: 14vmin;
+      --trap-outer-span: 24vmin;
+      --container-size: 62vmin;
+      --ring-thickness: 3vmin;
 
-        :root {
-            --bg-base: #0D0D0D;
-            --bg-surface: #111111;
-            --bg-surface2: #1A1A1A;
-            --bg-surface3: #222222;
-            --bg-input: #161616;
+      /* -- Dark, serious background with danger undertone -- */
+      --bg-start: #1a1a1f;
+      --bg-end: #0d0d12;
 
-            --red: #E8192C;
-            --red-dark: #A50E1C;
-            --red-light: #FF4D5E;
-            --red-glow: rgba(232,25,44,0.28);
-            --red-subtle: rgba(232,25,44,0.09);
-            --red-border: rgba(232,25,44,0.35);
+      /* -- SOS button -- */
+      --sos-red: #e63946;
+      --sos-red-hover: #d62839;
+      --sos-red-active: #c1121f;
+      --sos-glow: rgba(230, 57, 70, 0.6);
 
-            --green: #22C55E;
-            --blue: #3B82F6;
-            --orange: #F97316;
-            --amber: #F59E0B;
-            --blue-light: #60A5FA;
-            --orange-light: #FB923C;
+      /* -- All four trapezoids: same solid dark colour -- */
+      --trap-bg: #1e1e26;
+      --trap-hover: #25252f;
+      --trap-border: rgba(255, 255, 255, 0.15);
+      --trap-border-hover: rgba(230, 57, 70, 0.55);
+      --trap-text: #c0c0cc;
 
-            --text-primary: #F5F5F5;
-            --text-secondary: #9A9A9A;
-            --text-muted: #555555;
+      /* -- Neutral tones -- */
+      --border-soft: rgba(255, 255, 255, 0.1);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --text-dark: #e0e0e0;
+      --text-mid: #999aaa;
+      --text-white: #ffffff;
+      --white: #1c1c22;
+      --card-bg: #1c1c22;
 
-            --border-base: rgba(255,255,255,0.05);
-            --border-soft: rgba(255,255,255,0.09);
-            --border-mid: rgba(255,255,255,0.13);
+      /* -- Typography -- */
+      --font-head: 'Nunito', sans-serif;
+      --font-body: 'Quicksand', sans-serif;
 
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 18px;
-            --radius-xl: 24px;
-            --radius-full: 9999px;
+      /* -- Shadows -- */
+      --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.4);
+      --shadow-lift: 0 8px 28px rgba(0, 0, 0, 0.6);
+      --shadow-sos: 0 6px 30px rgba(230, 57, 70, 0.6);
+      --shadow-sos-hover: 0 12px 44px rgba(230, 57, 70, 0.85);
+      --shadow-danger: 0 0 40px rgba(230, 57, 70, 0.25);
 
-            --shadow-red: 0 4px 28px rgba(232,25,44,0.30);
-            --shadow-card: 0 2px 20px rgba(0,0,0,0.45);
+      /* -- Bottom buttons -- */
+      --bottom-btn-height: 8vmin;
+      --bottom-btn-width: 14vmin;
+      --home-btn-width: 20vmin;
+      --account-btn-size: 8vmin;
 
-            --font-display: 'Space Grotesk', sans-serif;
-            --font-body: 'Nunito', sans-serif;
-            --font-mono: 'Courier New', monospace;
-        }
+      /* -- Larger label size -- */
+      --label-font-size: clamp(13px, 2.2vmin, 20px);
+    }
 
-        body {
-            background: var(--bg-base);
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* HEADER FIXED */
-        .app-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 62px;
-            background: rgba(17,17,17,0.97);
-            backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border-base);
-            padding: 0 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 100;
-        }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      font-family: var(--font-body);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      overflow: hidden;
+      position: relative;
+      gap: 2vmin;
+    }
 
-        .logo-area {
-            display: flex;
-            flex-direction: column;
-        }
-        .logo-main {
-            font-family: var(--font-display);
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--red);
-            letter-spacing: 2.5px;
-            line-height: 1.2;
-        }
-        .logo-sub {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            color: var(--text-muted);
-            letter-spacing: 3px;
-        }
+    /* -- Dark floating blobs with danger accent -- */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 45vmin;
+      height: 45vmin;
+      background: radial-gradient(circle, rgba(230, 57, 70, 0.12) 0%, transparent 70%);
+      top: -12vmin;
+      left: -12vmin;
+      animation: floatBlob 8s ease-in-out infinite;
+    }
+    body::after {
+      width: 55vmin;
+      height: 55vmin;
+      background: radial-gradient(circle, rgba(230, 57, 70, 0.08) 0%, transparent 70%);
+      bottom: -18vmin;
+      right: -18vmin;
+      animation: floatBlob 10s ease-in-out infinite reverse;
+    }
 
-        .status-pill {
-            background: rgba(34,197,94,0.07);
-            border: 1px solid rgba(34,197,94,0.18);
-            border-radius: var(--radius-full);
-            padding: 5px 14px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--green);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.35; }
-        }
-        .status-text {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--green);
-            letter-spacing: 1.5px;
-            font-weight: 700;
-        }
+    /* -- Subtle danger vignette overlay -- */
+    .danger-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(230, 57, 70, 0.06) 85%, rgba(180, 30, 40, 0.12) 100%);
+    }
 
-        .account-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--bg-surface2);
-            border: 1px solid var(--border-soft);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 18px;
-            position: relative;
-            transition: all 0.2s;
-        }
-        .account-btn:hover {
-            border-color: var(--red);
-        }
-        .badge-dot {
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            width: 9px;
-            height: 9px;
-            background: var(--red);
-            border-radius: 50%;
-            border: 2px solid var(--bg-surface);
-        }
+    @keyframes floatBlob {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      50% {
+        transform: translate(4vmin, 4vmin) scale(1.06);
+      }
+    }
 
-        /* SIDEBAR FIXED */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 62px;
-            width: 240px;
-            height: calc(100vh - 62px);
-            background: var(--bg-surface);
-            border-right: 1px solid var(--border-base);
-            padding: 24px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            overflow-y: auto;
-            z-index: 90;
-        }
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 11px 16px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            font-family: var(--font-body);
-            border: 1px solid transparent;
-            transition: background 0.18s, color 0.18s;
-            color: var(--text-muted);
-        }
-        .nav-item:hover {
-            background: var(--bg-surface2);
-            color: var(--text-primary);
-        }
-        .nav-item.active {
-            background: var(--red-subtle);
-            color: var(--red);
-            border-color: var(--red-border);
-        }
-        .nav-icon {
-            width: 24px;
-            text-align: center;
-            font-size: 20px;
-        }
-        .divider {
-            height: 1px;
-            background: var(--border-base);
-            margin: 8px 4px;
-        }
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-base);
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-muted);
-            text-align: center;
-            letter-spacing: 1px;
-        }
+    /* -- Page title (top center) -- */
+    .page-title {
+      position: fixed;
+      top: 2.5vmin;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-head);
+      font-size: clamp(13px, 2.2vmin, 19px);
+      font-weight: 800;
+      color: var(--text-white);
+      letter-spacing: 0.08em;
+      z-index: 50;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      animation: fadeIn 0.5s ease 0.1s both;
+      text-shadow: 0 0 20px rgba(230, 57, 70, 0.4);
+    }
+    .page-title .dot {
+      width: 9px;
+      height: 9px;
+      background: var(--sos-red);
+      border-radius: 50%;
+      animation: pulse-dot 1.8s ease-in-out infinite;
+      box-shadow: 0 0 12px var(--sos-glow);
+    }
+    @keyframes pulse-dot {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+        box-shadow: 0 0 8px var(--sos-glow);
+      }
+      50% {
+        transform: scale(1.8);
+        opacity: 0.5;
+        box-shadow: 0 0 20px var(--sos-glow);
+      }
+    }
 
-        /* MAIN CONTENT */
-        .main-content {
-            margin-left: 240px;
-            padding-top: 62px;
-            min-height: 100vh;
-            padding: 36px 44px;
-            background: var(--bg-base);
-            overflow-y: auto;
-        }
-        .page {
-            display: none;
-            animation: fadeSlideIn 0.25s ease;
-        }
-        .page.active-page {
-            display: block;
-        }
-        @keyframes fadeSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    /* -- Account button (top right) -- */
+    .account-button {
+      position: fixed;
+      top: 3vmin;
+      right: 4vmin;
+      width: var(--account-btn-size);
+      height: var(--account-btn-size);
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 2px solid var(--border-strong);
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-head);
+      font-size: clamp(12px, 2vmin, 18px);
+      font-weight: 800;
+      color: var(--text-white);
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      animation: fadeIn 0.5s ease 0.3s both;
+      overflow: hidden;
+    }
+    .account-button:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-lift);
+      border-color: var(--sos-red);
+    }
+    .account-button:active {
+      transform: scale(0.93);
+    }
 
-        /* global card styles */
-        .card-sos, .info-card, .action-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-base);
-            border-radius: var(--radius-xl);
-        }
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-top: 24px;
-            width: 100%;
-        }
-        /* SOS Arena */
-        .arena {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 0 auto 28px;
-        }
-        .sos-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 152px;
-            height: 152px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, var(--red-light), var(--red-dark));
-            border: 2px solid rgba(255,77,94,0.4);
-            box-shadow: 0 0 0 16px rgba(232,25,44,0.07), 0 0 0 32px rgba(232,25,44,0.03), 0 8px 36px rgba(232,25,44,0.55);
-            animation: sosPulse 2.5s ease-in-out infinite;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        @keyframes sosPulse {
-            0%, 100% { box-shadow: 0 0 0 16px rgba(232,25,44,0.07), 0 0 0 32px rgba(232,25,44,0.03); }
-            50% { box-shadow: 0 0 0 22px rgba(232,25,44,0.13), 0 0 0 42px rgba(232,25,44,0.06); }
-        }
-        .circle-btn {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            cursor: pointer;
-            border: 1.5px solid;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            transition: transform 0.15s, box-shadow 0.15s;
-            position: absolute;
-        }
-        .circle-btn:hover { transform: scale(1.08); }
-        .circle-btn:active { transform: scale(0.91); }
-        .contact-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border-base); }
-        .contact-row:last-child { border-bottom: none; }
-        .avatar-circle {
-            width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-family: var(--font-display); font-size: 16px;
-        }
-        .bottom-strip {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 24px;
-        }
-        /* modals */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0.2s, opacity 0.2s;
-        }
-        .modal-overlay.active-modal {
-            visibility: visible;
-            opacity: 1;
-        }
-        .modal-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-soft);
-            border-radius: var(--radius-xl);
-            padding: 36px 32px;
-            width: 560px;
-            max-width: 90vw;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            animation: scaleIn 0.25s ease;
-        }
-        @keyframes scaleIn {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .close-modal {
-            position: absolute;
-            top: 16px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            font-size: 22px;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-        .toast {
-            position: fixed;
-            top: 78px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-14px);
-            background: var(--bg-surface2);
-            border: 1px solid var(--border-mid);
-            border-radius: var(--radius-md);
-            padding: 11px 20px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-primary);
-            box-shadow: var(--shadow-card);
-            z-index: 300;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.28s ease;
-            white-space: nowrap;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        input, select {
-            background: var(--bg-input);
-            border: 1px solid var(--border-soft);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            font-size: 14px;
-            padding: 11px 14px;
-            width: 100%;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        input:focus {
-            border-color: var(--red);
-            box-shadow: 0 0 0 3px var(--red-subtle);
-        }
-        button {
-            cursor: pointer;
-        }
-    </style>
+    /* -- Emergency panel (central layout container) -- */
+    .emergency-panel {
+      position: relative;
+      width: var(--container-size);
+      height: var(--container-size);
+      flex-shrink: 0;
+      z-index: 1;
+      animation: panelIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    /* -- Concentric ring behind SOS -- */
+    .sos-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(var(--circle-diameter) + var(--ring-thickness) * 2);
+      height: calc(var(--circle-diameter) + var(--ring-thickness) * 2);
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid rgba(230, 57, 70, 0.2);
+      z-index: 9;
+      pointer-events: none;
+      animation: ringPulse 2.5s ease-in-out infinite;
+      box-shadow: var(--shadow-danger);
+    }
+    @keyframes ringPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.35);
+        border-color: rgba(230, 57, 70, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 0 14px rgba(230, 57, 70, 0);
+        border-color: rgba(230, 57, 70, 0.5);
+      }
+    }
+
+    /* -- Central SOS button -- */
+    .sos-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: var(--circle-diameter);
+      height: var(--circle-diameter);
+      border-radius: 50%;
+      background: var(--sos-red);
+      color: var(--text-white);
+      border: 3px solid rgba(255, 255, 255, 0.25);
+      font-family: var(--font-head);
+      font-size: clamp(22px, 4.5vmin, 40px);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: var(--shadow-sos);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.15s ease, border-color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    .sos-button:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      box-shadow: var(--shadow-sos-hover);
+      background: var(--sos-red-hover);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    .sos-button:active {
+      transform: translate(-50%, -50%) scale(0.93);
+      box-shadow: 0 3px 14px rgba(230, 57, 70, 0.5);
+      transition-duration: 0.07s;
+      background: var(--sos-red-active);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+    .sos-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .sos-sub {
+      display: block;
+      font-size: clamp(6px, 1.1vmin, 10px);
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      opacity: 0.8;
+      margin-top: 2px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* -- Trapezoid buttons (four corners, curved inner edges, heavily rounded) -- */
+    .trapezoid {
+      position: absolute;
+      border: 1px solid var(--trap-border);
+      cursor: pointer;
+      z-index: 5;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: var(--trap-bg);
+    }
+    .trapezoid:hover {
+      filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.7));
+      z-index: 8;
+      background: var(--trap-hover);
+      border-color: var(--trap-border-hover);
+    }
+    .trapezoid:active {
+      transition-duration: 0.07s;
+    }
+
+    /* -- Top-Left: Police -- */
+    .trapezoid-top-left {
+      top: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      left: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      width: var(--trap-outer-span);
+      height: var(--trap-outer-span);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
+          calc(100% - var(--circle-radius)) 100%,
+          100% calc(100% - var(--circle-radius)));
+      border-radius: 24px 0 0 0;
+    }
+    .trapezoid-top-left:hover {
+      transform: scale(1.05) translate(-2px, -2px);
+    }
+    .trapezoid-top-left:active {
+      transform: scale(0.95);
+    }
+
+    /* -- Top-Right: Ambulance -- */
+    .trapezoid-top-right {
+      top: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      right: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      width: var(--trap-outer-span);
+      height: var(--trap-outer-span);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
+          var(--circle-radius) 100%,
+          0% calc(100% - var(--circle-radius)));
+      border-radius: 0 24px 0 0;
+    }
+    .trapezoid-top-right:hover {
+      transform: scale(1.05) translate(2px, -2px);
+    }
+    .trapezoid-top-right:active {
+      transform: scale(0.95);
+    }
+
+    /* -- Bottom-Right: Fire -- */
+    .trapezoid-bottom-right {
+      bottom: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      right: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      width: var(--trap-outer-span);
+      height: var(--trap-outer-span);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
+          var(--circle-radius) 0%,
+          0% var(--circle-radius));
+      border-radius: 0 0 24px 0;
+    }
+    .trapezoid-bottom-right:hover {
+      transform: scale(1.05) translate(2px, 2px);
+    }
+    .trapezoid-bottom-right:active {
+      transform: scale(0.95);
+    }
+
+    /* -- Bottom-Left: Family -- */
+    .trapezoid-bottom-left {
+      bottom: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      left: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length));
+      width: var(--trap-outer-span);
+      height: var(--trap-outer-span);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%,
+          calc(100% - var(--circle-radius)) 0%,
+          100% var(--circle-radius));
+      border-radius: 0 0 0 24px;
+    }
+    .trapezoid-bottom-left:hover {
+      transform: scale(1.05) translate(-2px, 2px);
+    }
+    .trapezoid-bottom-left:active {
+      transform: scale(0.95);
+    }
+
+    /* -- Service labels (bigger text, unified colour) -- */
+    .service-label {
+      position: absolute;
+      font-family: var(--font-head);
+      font-size: var(--label-font-size);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 16;
+      text-align: center;
+      line-height: 1.3;
+      color: var(--trap-text);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+    .label-top-left {
+      top: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      left: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      transform: translate(-50%, -50%);
+    }
+    .label-top-right {
+      top: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      right: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      transform: translate(50%, -50%);
+    }
+    .label-bottom-right {
+      bottom: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      right: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      transform: translate(50%, 50%);
+    }
+    .label-bottom-left {
+      bottom: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      left: calc(50% - var(--circle-radius) - var(--gap) - var(--trap-length) + var(--trap-outer-span) / 2);
+      transform: translate(-50%, 50%);
+    }
+
+    /* -- Bottom section (home + action buttons) -- */
+    .bottom-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      z-index: 20;
+      flex-shrink: 0;
+      animation: panelIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+    }
+
+    /* -- Home button -- */
+    .home-button {
+      width: var(--home-btn-width);
+      height: var(--bottom-btn-height);
+      background: var(--card-bg);
+      border: 2px solid var(--border-strong);
+      cursor: pointer;
+      font-family: var(--font-head);
+      font-size: clamp(9px, 1.5vmin, 13px);
+      font-weight: 800;
+      color: var(--text-white);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      padding: 0 1vmin;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px 12px 0 0;
+      margin-bottom: -2px;
+      overflow: hidden;
+    }
+    .home-button:hover {
+      transform: scale(1.04);
+      box-shadow: var(--shadow-lift);
+      z-index: 2;
+      background: #22222a;
+      border-color: var(--sos-red);
+    }
+    .home-button:active {
+      transform: scale(0.96);
+      transition-duration: 0.07s;
+    }
+
+    /* -- Bottom rectangular buttons row -- */
+    .bottom-buttons-row {
+      display: flex;
+      flex-direction: row;
+      gap: 0;
+    }
+    .bottom-rect-btn {
+      width: var(--bottom-btn-width);
+      height: var(--bottom-btn-height);
+      background: var(--card-bg);
+      border: 2px solid var(--border-strong);
+      cursor: pointer;
+      font-family: var(--font-head);
+      font-size: clamp(8px, 1.3vmin, 12px);
+      font-weight: 800;
+      color: var(--text-white);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.15s, border-color 0.2s ease;
+      padding: 0 0.8vmin;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: -2px;
+      overflow: hidden;
+    }
+    .bottom-rect-btn:first-child {
+      margin-left: 0;
+      border-radius: 0 0 0 12px;
+    }
+    .bottom-rect-btn:last-child {
+      border-radius: 0 0 12px 0;
+    }
+    .bottom-rect-btn:hover {
+      transform: scale(1.06);
+      box-shadow: var(--shadow-lift);
+      z-index: 2;
+      border-color: var(--sos-red);
+      background: #22222a;
+    }
+    .bottom-rect-btn:active {
+      transform: scale(0.94);
+      transition-duration: 0.07s;
+    }
+
+    /* -- Ripple effect on click -- */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(230, 57, 70, 0.25);
+      transform: scale(0);
+      animation: rippleAnim 0.55s linear forwards;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* -- Toast notification -- */
+    .toast {
+      position: fixed;
+      bottom: 4vmin;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #2a2a35;
+      color: var(--text-white);
+      font-family: var(--font-head);
+      font-size: clamp(11px, 1.8vmin, 15px);
+      font-weight: 700;
+      padding: 1.2vmin 3vmin;
+      border-radius: 100px;
+      border: 1px solid rgba(230, 57, 70, 0.4);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* -- Entry animations -- */
+    @keyframes panelIn {
+      from {
+        opacity: 0;
+        transform: scale(0.85) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* -- Responsive adjustments -- */
+    @media (max-width: 400px) {
+      :root {
+        --gap: 1.6vmin;
+        --trap-length: 13vmin;
+        --trap-outer-span: 26vmin;
+        --circle-diameter: 17vmin;
+        --circle-radius: 8.5vmin;
+        --container-size: 66vmin;
+        --ring-thickness: 2.5vmin;
+        --account-btn-size: 9vmin;
+        --bottom-btn-height: 9vmin;
+        --bottom-btn-width: 16vmin;
+        --home-btn-width: 20vmin;
+        --label-font-size: clamp(11px, 1.8vmin, 16px);
+      }
+    }
+    @media (min-width: 1200px) {
+      :root {
+        --gap: 2.5vmin;
+        --trap-length: 15vmin;
+        --trap-outer-span: 26vmin;
+        --circle-diameter: 18vmin;
+        --circle-radius: 9vmin;
+        --container-size: 66vmin;
+        --ring-thickness: 3.2vmin;
+        --account-btn-size: 5.5vmin;
+        --bottom-btn-height: 7.5vmin;
+        --bottom-btn-width: 15vmin;
+        --home-btn-width: 22vmin;
+        --label-font-size: clamp(14px, 2.4vmin, 22px);
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="app-header">
-    <div class="logo-area">
-        <div class="logo-main">SAFEGUARD</div>
-        <div class="logo-sub">EMERGENCY RESPONSE</div>
-    </div>
-    <div class="status-pill">
-        <div class="pulse-dot"></div>
-        <div class="status-text">ALL SYSTEMS ACTIVE</div>
-    </div>
-    <div class="account-btn" id="profileEditBtn">
-        👤
-        <div class="badge-dot"></div>
-    </div>
-</div>
+  <!-- Subtle danger vignette overlay -->
+  <div class="danger-overlay" aria-hidden="true"></div>
 
-<div class="sidebar">
-    <div class="nav-item active" data-page="sos-page">
-        <span class="nav-icon">🆘</span> <span>SOS Dashboard</span>
-    </div>
-    <div class="nav-item" data-page="contacts-page">
-        <span class="nav-icon">📞</span> <span>Contacts</span>
-    </div>
-    <div class="nav-item" data-page="firstaid-page">
-        <span class="nav-icon">🩺</span> <span>First Aid</span>
-    </div>
-    <div class="nav-item" data-page="profile-page">
-        <span class="nav-icon">👤</span> <span>My Profile</span>
-    </div>
-    <div class="divider"></div>
-    <div class="nav-item" data-page="location-page">
-        <span class="nav-icon">📍</span> <span>Live Location</span>
-    </div>
-    <div class="nav-item" data-page="settings-page">
-        <span class="nav-icon">⚙️</span> <span>Settings</span>
-    </div>
-    <div class="sidebar-footer">v1.0.0 · OFFLINE READY</div>
-</div>
+  <!-- Page title -->
+  <div class="page-title">
+    <span class="dot"></span>
+    SafeReach
+  </div>
 
-<div class="main-content" id="mainContent">
-    <!-- SOS PAGE -->
-    <div id="sos-page" class="page active-page">
-        <div class="breadcrumb" style="font-size:11px; color:var(--text-muted); letter-spacing:3px; margin-bottom:6px;">SOS Dashboard</div>
-        <div style="font-family: var(--font-display); font-size:30px; font-weight:700; margin-bottom:32px;">Emergency Control Center</div>
-        <div class="grid-2col">
-            <div class="card-sos" style="padding:36px 32px; text-align:center;">
-                <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:3px;">PRESS IN EMERGENCY</div>
-                <div class="arena">
-                    <div class="sos-center" id="sosTriggerBtn"> <div style="font-family: var(--font-display); font-size:48px; font-weight:900;">SOS</div><div style="font-size:8px; letter-spacing:2px;">HOLD TO ACTIVATE</div> </div>
-                    <div class="circle-btn" style="top:16px; left:16px; background:#0A1628; border-color:#1D4ED8; color:var(--blue-light);" id="policeBtn">🚔<span>POLICE</span></div>
-                    <div class="circle-btn" style="top:16px; right:16px; background:#1A0608; border-color:var(--red); color:var(--red-light);" id="ambulanceBtn">🚑<span>AMBULANCE</span></div>
-                    <div class="circle-btn" style="bottom:16px; left:16px; background:#1A0C00; border-color:#EA580C; color:var(--orange-light);" id="fireBtn">🚒<span>FIRE</span></div>
-                    <div class="circle-btn" style="bottom:16px; right:16px; background:#001A0A; border-color:#16A34A; color:var(--green);" id="familyBtn">👨‍👩‍👧<span>FAMILY</span></div>
-                </div>
-                <div class="stat-grid">
-                    <div class="stat-card" style="background: var(--bg-base); border:1px solid var(--border-base); border-radius:var(--radius-md); padding:14px 16px;"><div style="font-family:var(--font-mono); font-size:9px;">📍 LOCATION</div><div id="loc-coords" style="font-weight:600;">Tracking...</div></div>
-                    <div class="stat-card" style="background: var(--bg-base); border:1px solid var(--border-base); border-radius:var(--radius-md); padding:14px 16px;"><div style="font-family:var(--font-mono); font-size:9px;">✅ STATUS</div><div style="color:var(--green);">Active</div></div>
-                    <div class="stat-card" style="background: var(--bg-base); border:1px solid var(--border-base); border-radius:var(--radius-md); padding:14px 16px;"><div style="font-family:var(--font-mono); font-size:9px;">🩸 BLOOD GROUP</div><div id="stat-blood" style="color:var(--red);">O+</div></div>
-                    <div class="stat-card" style="background: var(--bg-base); border:1px solid var(--border-base); border-radius:var(--radius-md); padding:14px 16px;"><div style="font-family:var(--font-mono); font-size:9px;">👥 CONTACTS</div><div id="stat-contacts">3 Saved</div></div>
-                </div>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:16px;">
-                <div class="info-card" style="padding:22px 20px;"><div style="font-family: var(--font-display); font-weight:600; margin-bottom:16px;">Emergency Contacts</div><div id="emergencyContactsList"></div></div>
-                <div class="info-card" style="padding:22px 20px;"><div style="font-family: var(--font-display); font-weight:600; margin-bottom:16px;">Live Tracking</div><div style="display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-base);"><span>🛰️</span><div><div>Live Location</div><div id="live-latlon" style="font-size:11px;">Fetching...</div></div><div style="margin-left:auto; background:rgba(34,197,94,0.09); border:1px solid rgba(34,197,94,0.22); border-radius:var(--radius-full); padding:2px 8px; color:var(--green); font-size:9px;">LIVE</div></div><div style="display:flex; gap:12px; padding:12px 0;"><span>📡</span><div><div>Emergency Status</div><div>All systems operational</div></div><div style="margin-left:auto; background:rgba(34,197,94,0.09); border:1px solid rgba(34,197,94,0.22); border-radius:var(--radius-full); padding:2px 8px; color:var(--green); font-size:9px;">READY</div></div></div>
-            </div>
-        </div>
-        <div class="bottom-strip">
-            <div class="action-card" id="groupAlertBtn" style="border-color:rgba(59,130,246,0.25); padding:20px 18px; display:flex; align-items:center; gap:16px; cursor:pointer;"><span style="font-size:28px;">📢</span><div><div style="color:var(--blue-light); font-weight:700;">Group Emergency Alert</div><div style="font-size:11px;">Notify all contacts</div></div><span style="margin-left:auto;">→</span></div>
-            <div class="action-card" id="autoSmsBtn" style="border-color:rgba(245,158,11,0.25); padding:20px 18px; display:flex; align-items:center; gap:16px; cursor:pointer;"><span style="font-size:28px;">📨</span><div><div style="color:var(--amber); font-weight:700;">Auto SMS Alert</div><div style="font-size:11px;">Send live location</div></div><span style="margin-left:auto;">→</span></div>
-            <div class="action-card" id="fakeCallBtn" style="border-color:rgba(34,197,94,0.25); padding:20px 18px; display:flex; align-items:center; gap:16px; cursor:pointer;"><span style="font-size:28px;">📲</span><div><div style="color:var(--green); font-weight:700;">Fake Incoming Call</div><div style="font-size:11px;">Escape unsafe situations</div></div><span style="margin-left:auto;">→</span></div>
-        </div>
+  <!-- Account button -->
+  <button class="account-button" data-service="account" aria-label="View Account" title="Account">
+    AB
+  </button>
+
+  <!-- Main emergency panel -->
+  <div class="emergency-panel" role="region" aria-label="Emergency response controls">
+
+    <!-- White concentric ring -->
+    <div class="sos-ring" aria-hidden="true"></div>
+
+    <!-- Police (top-left) -->
+    <button class="trapezoid trapezoid-top-left" data-service="police" aria-label="Call Police" title="Police"></button>
+    <span class="service-label label-top-left">Police</span>
+
+    <!-- Ambulance (top-right) -->
+    <button class="trapezoid trapezoid-top-right" data-service="ambulance" aria-label="Call Ambulance" title="Ambulance"></button>
+    <span class="service-label label-top-right">Ambulance</span>
+
+    <!-- Fire (bottom-right) -->
+    <button class="trapezoid trapezoid-bottom-right" data-service="fire" aria-label="Call Fire Service" title="Fire Service"></button>
+    <span class="service-label label-bottom-right">Fire</span>
+
+    <!-- Family (bottom-left) -->
+    <button class="trapezoid trapezoid-bottom-left" data-service="family" aria-label="Send Family Alert" title="Family Alert"></button>
+    <span class="service-label label-bottom-left">Family</span>
+
+    <!-- Central SOS button -->
+    <button class="sos-button" data-service="sos" aria-label="SOS Emergency" title="SOS Emergency">
+      <span class="sos-inner">
+        SOS
+        <span class="sos-sub">HELP ME</span>
+      </span>
+    </button>
+
+  </div>
+
+  <!-- Bottom section -->
+  <div class="bottom-section" role="group" aria-label="Navigation and additional options">
+    <button class="home-button" data-service="home" aria-label="Go to Home" title="Home">
+      Home
+    </button>
+    <div class="bottom-buttons-row">
+      <button class="bottom-rect-btn" data-service="contacts" aria-label="Contacts" title="Contacts">
+        Contacts
+      </button>
+      <button class="bottom-rect-btn" data-service="location" aria-label="Location" title="Location">
+        Location
+      </button>
+      <button class="bottom-rect-btn" data-service="firstaid" aria-label="First Aid" title="First Aid">
+        First Aid
+      </button>
+      <button class="bottom-rect-btn" data-service="settings" aria-label="Settings" title="Settings">
+        Settings
+      </button>
     </div>
-    <!-- placeholder other pages: minimal but visible -->
-    <div id="contacts-page" class="page"><div style="font-size:24px;">📞 Contacts Manager (Same as SOS contacts) — Reloads same data</div><div id="altContactsList"></div></div>
-    <div id="firstaid-page" class="page"><div style="font-family:var(--font-display); font-size:26px;">🩺 First Aid Guides</div><div id="firstaidGrid" class="grid-2col" style="grid-template-columns:repeat(3,1fr);"></div></div>
-    <div id="profile-page" class="page"><div style="font-family:var(--font-display); font-size:26px;">👤 My Profile</div><div id="profileRender"></div></div>
-    <div id="location-page" class="page">📍 Live Location Map simulation (coordinates updated)</div>
-    <div id="settings-page" class="page">⚙️ Settings pane — Data persistence active</div>
-</div>
+  </div>
 
-<!-- MODALS -->
-<div id="sosOverlay" class="modal-overlay"><div class="modal-card" style="text-align:center; width:360px;"><div style="font-size:56px; animation: shake 0.3s infinite;">🚨</div><div style="font-family:var(--font-display); font-size:30px; color:var(--red);">SOS ACTIVATED</div><div>Emergency services alerted. Location shared with contacts.</div><div id="sosCountdown" style="font-size:60px; font-weight:900;">5</div><button id="cancelSosBtn" style="background:var(--bg-surface2); border:1px solid var(--border-mid); padding:13px; width:100%; border-radius:var(--radius-md); margin-top:16px;">Cancel SOS</button></div></div>
-<div id="aidModal" class="modal-overlay"><div class="modal-card"><button class="close-modal" id="closeAidModal">✕</button><div id="modalTitle"></div><div id="modalSteps"></div></div></div>
-<div id="smsOverlay" class="modal-overlay"><div class="modal-card" style="text-align:center;"><span style="font-size:48px;">✅</span><div id="smsMsg" style="margin:16px 0;">SMS sent</div><button id="closeSmsBtn" style="background:transparent; border:1px solid var(--amber); padding:8px 24px; border-radius:var(--radius-md);">OK</button></div></div>
-<div id="callOverlay" class="modal-overlay"><div style="background:var(--bg-surface); border-radius:var(--radius-xl); padding:40px; text-align:center; width:360px;"><div style="width:100px; height:100px; background:linear-gradient(135deg,#0A1F0D,#051208); border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:44px;">👩</div><div style="font-family: var(--font-display); font-size:32px;">EMERGENCY</div><div id="callStatus" style="color:var(--green); margin:12px 0;">Incoming Call...</div><div style="display:flex; gap:40px; justify-content:center; margin-top:40px;"><button id="declineCallBtn" style="background:var(--red); width:72px; height:72px; border-radius:50%; border:none; font-size:28px;">📵</button><button id="acceptCallBtn" style="background:var(--green); width:72px; height:72px; border-radius:50%; border:none; font-size:28px;">📞</button></div></div></div>
-<div id="profileModal" class="modal-overlay"><div class="modal-card"><button class="close-modal" id="closeProfileModal">✕</button><div style="font-size:22px;">✏️ Edit Your Profile</div><div id="profileFormFields"></div><button id="saveProfileBtn" style="background: linear-gradient(145deg, var(--red-light), var(--red-dark)); width:100%; padding:14px; border:none; border-radius:var(--radius-md); margin-top:20px; color:white; font-weight:700;">💾 Save Profile</button></div></div>
-<div id="toastMsg" class="toast"></div>
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
 
-<script>
-    // ----- Data
-    let contacts = [
-        { name: "Arjun Singh", relation: "Brother", number: "+91 98765 43210", initial: "A", colorBg: "rgba(232,25,44,0.1)", color: "var(--red)" },
-        { name: "Sneha Kapoor", relation: "Sister", number: "+91 87654 32109", initial: "S", colorBg: "rgba(59,130,246,0.1)", color: "var(--blue-light)" },
-        { name: "Mother", relation: "Mother", number: "+91 99887 76655", initial: "M", colorBg: "rgba(34,197,94,0.1)", color: "var(--green)" }
-    ];
-    let aidData = {
-        cpr: { title: "❤️‍🔥 CPR Guide", steps: ["1. Check responsiveness.", "2. Call emergency.", "3. Start chest compressions (100-120/min).", "4. Give rescue breaths.", "5. Continue until help arrives."], color: "var(--red)" },
-        heart: { title: "🫀 Heart Attack", steps: ["Call 108 immediately.", "Make patient sit down.", "Give aspirin if not allergic.", "Loosen tight clothing.", "Monitor consciousness."], color: "var(--orange-light)" },
-        burn: { title: "🔥 Burn Treatment", steps: ["Cool burn under running water 10-15 min.", "Remove jewelry/clothing around area.", "Cover with sterile gauze.", "Do not apply ice/butter.", "Seek medical help if severe."], color: "var(--amber)" }
-    };
-    aidData.snake = { title: "🐍 Snake Bite", steps: ["Keep victim calm, immobilize limb.", "Remove tight items.", "Do not suck venom or apply tourniquet.", "Get medical antivenom urgently."], color: "var(--green)" };
-    aidData.bleed = { title: "🩸 Bleeding", steps: ["Apply direct pressure.", "Elevate injured area.", "Use clean cloth/bandage.", "Add layers if bleeding continues.", "Seek medical help."], color: "#FF6B6B" };
-    aidData.tips = { title: "💡 Emergency Tips", steps: ["Stay calm, assess surroundings.", "Call 112 for any emergency.", "Evacuate if fire hazard.", "First aid kit location known.", "Share your location with family."], color: "var(--blue-light)" };
+  <script>
+    (function() {
+      // -- Toast notification logic --
+      var toast = document.getElementById('toast');
+      var toastTimer = null;
 
-    let sosTimerInterval = null;
-    let fakeCallInterval = null;
-    let currentLat = "23.0225", currentLon = "72.5714";
-
-    // Helper: toast
-    function showToast(msg) {
-        const toast = document.getElementById('toastMsg');
-        toast.textContent = msg;
+      function showToast(message) {
+        if (!toast) return;
+        clearTimeout(toastTimer);
+        toast.textContent = message;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2800);
-    }
+        toastTimer = setTimeout(function() {
+          toast.classList.remove('show');
+        }, 2200);
+      }
 
-    // Geolocation
-    function updateLocationUI() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => {
-                currentLat = pos.coords.latitude.toFixed(4);
-                currentLon = pos.coords.longitude.toFixed(4);
-                document.getElementById('loc-coords') && (document.getElementById('loc-coords').innerText = `${currentLat}, ${currentLon}`);
-                document.getElementById('live-latlon') && (document.getElementById('live-latlon').innerText = `${currentLat}, ${currentLon}`);
-            }, () => { document.getElementById('loc-coords') && (document.getElementById('loc-coords').innerText = "Location access required"); });
+      // -- Messages map for each service --
+      var messages = {
+        sos: 'SOS sent! Help is on the way.',
+        police: 'Connecting to Police...',
+        ambulance: 'Calling Ambulance...',
+        fire: 'Alerting Fire Service...',
+        family: 'Family Alert sent!',
+        home: 'Going Home...',
+        contacts: 'Opening Contacts',
+        location: 'Sharing Location...',
+        firstaid: 'Opening First Aid Guide',
+        settings: 'Opening Settings',
+        account: 'Your Account'
+      };
+
+      // -- Ripple effect on click --
+      function addRipple(element, event) {
+        if (!element || !event) return;
+
+        var computedPosition = window.getComputedStyle(element).position;
+        if (computedPosition === 'static') {
+          element.style.position = 'relative';
         }
-    }
-
-    // SOS countdown
-    function activateSOS() {
-        const overlay = document.getElementById('sosOverlay');
-        overlay.classList.add('active-modal');
-        let count = 5;
-        const countEl = document.getElementById('sosCountdown');
-        if (sosTimerInterval) clearInterval(sosTimerInterval);
-        sosTimerInterval = setInterval(() => {
-            count--;
-            countEl.innerText = count;
-            if (count <= 0) {
-                clearInterval(sosTimerInterval);
-                overlay.classList.remove('active-modal');
-                showToast('🚨 Emergency services alerted! Stay safe.');
-            }
-        }, 1000);
-    }
-    function cancelSOS() {
-        if (sosTimerInterval) clearInterval(sosTimerInterval);
-        document.getElementById('sosOverlay').classList.remove('active-modal');
-        showToast('✅ SOS cancelled');
-    }
-
-    // Fake call
-    function startFakeCall() {
-        document.getElementById('callOverlay').classList.add('active-modal');
-        document.getElementById('callStatus').innerText = "Incoming Call...";
-        const acceptBtn = document.getElementById('acceptCallBtn'), declineBtn = document.getElementById('declineCallBtn');
-        let timer = null, seconds = 0;
-        function endCall() { if(timer) clearInterval(timer); document.getElementById('callOverlay').classList.remove('active-modal'); showToast('Call ended'); }
-        acceptBtn.onclick = () => {
-            document.getElementById('callStatus').innerText = "Connected · 00:00";
-            if(timer) clearInterval(timer);
-            timer = setInterval(() => { seconds++; let mins = Math.floor(seconds/60); let secs = seconds%60; document.getElementById('callStatus').innerText = `Connected · ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`; }, 1000);
-            setTimeout(() => { clearInterval(timer); document.getElementById('callOverlay').classList.remove('active-modal'); showToast('Call ended'); }, 5000);
-        };
-        declineBtn.onclick = () => { if(timer) clearInterval(timer); document.getElementById('callOverlay').classList.remove('active-modal'); showToast('Call declined'); };
-    }
-
-    // SMS overlay
-    function showSMSOverlay(contactName) { document.getElementById('smsMsg').innerText = `📨 SMS sent to ${contactName} with live location.`; document.getElementById('smsOverlay').classList.add('active-modal'); }
-    function closeSMSOverlay() { document.getElementById('smsOverlay').classList.remove('active-modal'); }
-
-    // First Aid Modal
-    function openAidModal(typeKey) {
-        const data = aidData[typeKey];
-        if (!data) return;
-        document.getElementById('modalTitle').innerHTML = `<div style="font-family:var(--font-display); font-size:26px; font-weight:700; color:${data.color}">${data.title}</div><div style="margin:12px 0; height:1px; background:var(--border-base);"></div>`;
-        let stepsHtml = '<div>';
-        data.steps.forEach((step, idx) => { stepsHtml += `<div style="display:flex; gap:16px; margin-bottom:16px;"><div style="width:30px; height:30px; background:${data.color}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; color:black;">${idx+1}</div><div style="flex:1;">${step}</div></div>`; });
-        stepsHtml += '</div>';
-        document.getElementById('modalSteps').innerHTML = stepsHtml;
-        document.getElementById('aidModal').classList.add('active-modal');
-    }
-    function closeAidModal() { document.getElementById('aidModal').classList.remove('active-modal'); }
-
-    // Profile + localStorage
-    let profile = { fullName: "Rajveer Singh", bloodGroup: "O+", phone: "+91 9876543210", dob: "1990-01-01", medicalConditions: "Diabetes, Hypertension", allergies: "Penicillin, Peanuts", address: "Sector 62, Noida" };
-    function loadProfileFromStorage() {
-        const saved = localStorage.getItem('sg_profile');
-        if(saved) profile = JSON.parse(saved);
-        updateProfileUI();
-    }
-    function updateProfileUI() {
-        document.getElementById('stat-blood') && (document.getElementById('stat-blood').innerText = profile.bloodGroup);
-        const profileHtml = `<div class="grid-2col" style="grid-template-columns:340px 1fr;"><div class="card-sos" style="padding:32px; text-align:center;"><div style="width:92px; height:92px; background:linear-gradient(135deg,var(--red-dark),#3D0008); border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:40px;">👤</div><div style="font-family:var(--font-display); font-size:24px; margin-top:16px;">${profile.fullName}</div><div style="background:var(--red-subtle); border:1px solid var(--red-border); border-radius:var(--radius-full); display:inline-block; padding:4px 14px; margin:10px 0;">${profile.bloodGroup}</div><div>${profile.phone}</div><div class="stat-grid" style="margin-top:20px;">...</div></div><div class="card-sos" style="padding:28px;"><h3>Medical Information</h3><div>🏥 Conditions: <span style="color:var(--blue-light);">${profile.medicalConditions}</span></div><div>⚠️ Allergies: <span style="color:var(--orange);">${profile.allergies}</span></div><div>📍 Address: ${profile.address}</div><div>🎂 DOB: ${profile.dob}</div><button id="openProfileEdit" style="background:linear-gradient(145deg, var(--red-light), var(--red-dark)); width:100%; margin-top:20px; padding:12px; border:none; border-radius:var(--radius-md); color:white;">Edit Profile</button></div></div>`;
-        document.getElementById('profileRender') && (document.getElementById('profileRender').innerHTML = profileHtml);
-        document.getElementById('openProfileEdit')?.addEventListener('click', openProfileModal);
-        // contacts count
-        document.getElementById('stat-contacts') && (document.getElementById('stat-contacts').innerText = contacts.length + " Saved");
-        renderContactsList();
-    }
-    function openProfileModal() {
-        const formHtml = `<label>Full Name</label><input id="editFullName" value="${profile.fullName}"><label>Blood Group</label><input id="editBlood" value="${profile.bloodGroup}"><label>Phone</label><input id="editPhone" value="${profile.phone}"><label>DOB</label><input id="editDob" type="date" value="${profile.dob}"><label>Medical Conditions</label><input id="editMed" value="${profile.medicalConditions}"><label>Allergies</label><input id="editAllergies" value="${profile.allergies}"><label>Address</label><input id="editAddress" value="${profile.address}">`;
-        document.getElementById('profileFormFields').innerHTML = formHtml;
-        document.getElementById('profileModal').classList.add('active-modal');
-    }
-    function saveProfile() {
-        profile.fullName = document.getElementById('editFullName').value;
-        profile.bloodGroup = document.getElementById('editBlood').value;
-        profile.phone = document.getElementById('editPhone').value;
-        profile.dob = document.getElementById('editDob').value;
-        profile.medicalConditions = document.getElementById('editMed').value;
-        profile.allergies = document.getElementById('editAllergies').value;
-        profile.address = document.getElementById('editAddress').value;
-        localStorage.setItem('sg_profile', JSON.stringify(profile));
-        updateProfileUI();
-        closeProfileModal();
-        showToast('✅ Profile saved');
-    }
-    function closeProfileModal() { document.getElementById('profileModal').classList.remove('active-modal'); }
-
-    function renderContactsList() {
-        const container = document.getElementById('emergencyContactsList');
-        if(container){
-            let html = '';
-            contacts.forEach(c => {
-                html += `<div class="contact-row"><div class="avatar-circle" style="background:${c.colorBg}; color:${c.color};">${c.initial}</div><div style="flex:1;"><div>${c.name}</div><div style="font-size:10px;">${c.relation} · ${c.number}</div></div><div style="display:flex; gap:6px;"><button class="callContact" data-number="${c.number}" style="width:32px;height:32px;border-radius:50%;background:var(--bg-surface2);border:1px solid var(--border-soft);cursor:pointer;">📞</button><button class="smsContact" data-name="${c.name}" style="width:32px;height:32px;border-radius:50%;background:var(--bg-surface2);border:1px solid var(--border-soft);cursor:pointer;">💬</button></div></div>`;
-            });
-            container.innerHTML = html;
-            document.querySelectorAll('.callContact').forEach(btn => btn.addEventListener('click', (e) => { showToast(`📞 Calling ${contacts[e.currentTarget.closest('.contact-row')?.querySelector('div div')?.innerText || 'contact'}`); }));
-            document.querySelectorAll('.smsContact').forEach(btn => btn.addEventListener('click', (e) => { const name = btn.getAttribute('data-name'); showSMSOverlay(name); }));
+        if (window.getComputedStyle(element).overflow === 'visible') {
+          element.style.overflow = 'hidden';
         }
-    }
 
-    function buildFirstAidGrid() {
-        const grid = document.getElementById('firstaidGrid');
-        if(grid){
-            const items = [{key:'cpr',icon:'❤️‍🔥',label:'CPR Guide'},{key:'heart',icon:'🫀',label:'Heart Attack'},{key:'burn',icon:'🔥',label:'Burn'},{key:'snake',icon:'🐍',label:'Snake Bite'},{key:'bleed',icon:'🩸',label:'Bleeding'},{key:'tips',icon:'💡',label:'Tips'}];
-            grid.innerHTML = items.map(it => `<div style="background:var(--bg-surface); border:1px solid var(--border-base); border-radius:var(--radius-xl); padding:28px; text-align:center; cursor:pointer;" data-aid="${it.key}"><div style="font-size:44px;">${it.icon}</div><div style="font-weight:700;">${it.label}</div></div>`).join('');
-            document.querySelectorAll('[data-aid]').forEach(el => el.addEventListener('click', (e) => openAidModal(el.getAttribute('data-aid'))));
-        }
-    }
+        var rect = element.getBoundingClientRect();
+        var ripple = document.createElement('span');
+        ripple.className = 'ripple';
 
-    // Navigation
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const pageId = item.getAttribute('data-page');
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active-page'));
-            document.getElementById(pageId).classList.add('active-page');
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-            if(pageId === 'firstaid-page') buildFirstAidGrid();
-            if(pageId === 'profile-page') updateProfileUI();
-            if(pageId === 'contacts-page') renderContactsList();
+        var size = Math.max(rect.width, rect.height);
+        var clientX = event.clientX || (event.touches && event.touches[0] && event.touches[0].clientX) || rect.left + rect.width / 2;
+        var clientY = event.clientY || (event.touches && event.touches[0] && event.touches[0].clientY) || rect.top + rect.height / 2;
+        var x = clientX - rect.left - size / 2;
+        var y = clientY - rect.top - size / 2;
+
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+
+        element.appendChild(ripple);
+
+        setTimeout(function() {
+          if (ripple && ripple.parentNode) {
+            ripple.parentNode.removeChild(ripple);
+          }
+        }, 600);
+      }
+
+      // -- Select all interactive buttons --
+      var buttons = document.querySelectorAll('.sos-button, .trapezoid, .account-button, .home-button, .bottom-rect-btn');
+
+      buttons.forEach(function(btn) {
+        var serviceName = btn.getAttribute('data-service');
+
+        btn.addEventListener('pointerdown', function(e) {
+          e.preventDefault();
         });
-    });
-    // events
-    document.getElementById('sosTriggerBtn')?.addEventListener('click', activateSOS);
-    document.getElementById('cancelSosBtn')?.addEventListener('click', cancelSOS);
-    document.getElementById('fakeCallBtn')?.addEventListener('click', startFakeCall);
-    document.getElementById('groupAlertBtn')?.addEventListener('click', () => showToast('📢 Group alert sent to all 3 contacts!'));
-    document.getElementById('autoSmsBtn')?.addEventListener('click', () => showSMSOverlay('All Contacts'));
-    document.getElementById('closeSmsBtn')?.addEventListener('click', closeSMSOverlay);
-    document.getElementById('closeAidModal')?.addEventListener('click', closeAidModal);
-    document.getElementById('saveProfileBtn')?.addEventListener('click', saveProfile);
-    document.getElementById('closeProfileModal')?.addEventListener('click', closeProfileModal);
-    document.getElementById('profileEditBtn')?.addEventListener('click', openProfileModal);
-    document.querySelectorAll('#policeBtn, #ambulanceBtn, #fireBtn, #familyBtn').forEach(btn => btn.addEventListener('click', (e) => { showToast(`📞 Emergency call triggered: ${btn.innerText.trim()}`); }));
-    window.addEventListener('load', () => { loadProfileFromStorage(); updateLocationUI(); setInterval(updateLocationUI, 5000); buildFirstAidGrid(); renderContactsList(); });
-</script>
+
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          addRipple(btn, e);
+          if (messages[serviceName]) {
+            showToast(messages[serviceName]);
+          }
+          console.log('[SafeReach] ' + (btn.getAttribute('aria-label') || serviceName) + ' activated');
+        });
+
+        btn.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            btn.click();
+          }
+        });
+      });
+
+      console.log('[SafeReach] Ready. Stay safe.');
+    })();
+  </script>
 </body>
 </html>
